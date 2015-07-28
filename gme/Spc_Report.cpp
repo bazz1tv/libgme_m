@@ -1,6 +1,7 @@
 #include "gme/Spc_Report.h"
 
-void (*Spc_Report::report)(Type type, unsigned addr, unsigned opcode) = NULL;
+Spc_Report *Spc_Report::obj = NULL;
+//void (*Spc_Report::report)(Type type, unsigned addr, unsigned opcode) = NULL;
 /*void (*Spc_Report::mem_read)(unsigned addr) = NULL;
 void (*Spc_Report::mem_echo)(unsigned addr) = NULL;
 void (*Spc_Report::mem_execute)(unsigned addr, unsigned opcode) = NULL;

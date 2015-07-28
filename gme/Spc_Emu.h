@@ -8,6 +8,7 @@
 #include "Music_Emu.h"
 #include "Snes_Spc.h"
 #include "Spc_Dsp_Register_Map_Interface.h"
+#include "Spc_Report.h"
 
 class Spc_Emu : public Music_Emu, public Spc_Dsp_Register_Map_Interface {
 public:
@@ -68,6 +69,8 @@ public:
 	Spc_Dsp* dsp();
 	uint8_t read_dsp(uint8_t dsp_addr);
 	void write_dsp(uint8_t dsp_addr, int val);
+	void enable_reports();
+	void disable_reports();
 	//
 
 public:

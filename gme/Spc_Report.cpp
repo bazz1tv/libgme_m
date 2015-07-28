@@ -1,18 +1,26 @@
 #include "gme/Spc_Report.h"
 
-namespace Spc_Report
-{
-  //const int BRR_HEADER_MAX, SRCN_MAX;
-  unsigned char used2[0x101];
-  unsigned char used[0x10006];
-  //Mem_Surface memsurface;
-  int last_pc = -1;
-  int bcolor=0; // backup color
-  Src src[MAX_SRCN_ENTRIES];
-  //blargg_vector<unsigned int> memread, memread2, memecho, memwrite;
+void (*Spc_Report::report)(Type type, unsigned addr, unsigned opcode) = NULL;
+/*void (*Spc_Report::mem_read)(unsigned addr) = NULL;
+void (*Spc_Report::mem_echo)(unsigned addr) = NULL;
+void (*Spc_Report::mem_execute)(unsigned addr, unsigned opcode) = NULL;
+void (*Spc_Report::mem_write)(unsigned addr) = NULL;*/
 
-	void (*mem_read)(unsigned addr) = NULL;
-	void (*mem_echo)(unsigned addr) = NULL;
-	void (*mem_read2)(unsigned addr, unsigned opcode) = NULL;
-	void (*mem_write)(unsigned addr) = NULL;
-}
+Spc_Report::Src Spc_Report::src[MAX_SRCN_ENTRIES];
+/*namespace Spc_Report
+{
+  //const int BRR_HEADER_MAX, SRCN_MAX = NULL;
+  unsigned char used2[0x101] = NULL;
+  unsigned char used[0x10006] = NULL;
+  //Mem_Surface memsurface = NULL;
+  int last_pc = -1 = NULL;
+  int bcolor=0 = NULL; // backup color
+  Src src[MAX_SRCN_ENTRIES] = NULL;
+  //blargg_vector<unsigned int> memread, memread2, memecho, memwrite = NULL;
+
+  void (*report)(Type type, unsigned addr, unsigned opcode/*=0*///) = NULL;
+	/*void (*mem_read)(unsigned addr) = NULL = NULL;
+	void (*mem_echo)(unsigned addr) = NULL = NULL;
+	void (*mem_execute)(unsigned addr, unsigned opcode) = NULL = NULL;
+	void (*mem_write)(unsigned addr) = NULL = NULL;
+}*/

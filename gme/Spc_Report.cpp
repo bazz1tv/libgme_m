@@ -5,8 +5,13 @@ void (*Spc_Report::report)(Type type, unsigned addr, unsigned opcode) = NULL;
 void (*Spc_Report::mem_echo)(unsigned addr) = NULL;
 void (*Spc_Report::mem_execute)(unsigned addr, unsigned opcode) = NULL;
 void (*Spc_Report::mem_write)(unsigned addr) = NULL;*/
-
+int Spc_Report::last_pc = -1;
+int Spc_Report::bcolor = 0; // backup color
+unsigned char Spc_Report::used[0x10006];
+unsigned char Spc_Report::used2[0x101];
 Spc_Report::Src Spc_Report::src[MAX_SRCN_ENTRIES];
+
+
 /*namespace Spc_Report
 {
   //const int BRR_HEADER_MAX, SRCN_MAX = NULL;

@@ -12,7 +12,7 @@ License along with this module; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 //// Memory access
-//#include "debugger/report.h"
+#include "Spc_Report.h"
 
 #if SPC_MORE_ACCURACY
 	#define SUSPICIOUS_OPCODE( name ) ((void) 0)
@@ -197,7 +197,7 @@ loop:
 	check( (unsigned) y < 0x100 );
 	
 	opcode = *pc;
-//	report_memread2(pc-ram, *pc);
+	spc_report_mem_read2(pc-ram, *pc);
 	if ( (rel_time += m.cycle_table [opcode]) > 0 )
 		goto out_of_time;
 	

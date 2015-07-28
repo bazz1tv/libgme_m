@@ -2,7 +2,7 @@
 
 // snes_spc 0.9.0. http://www.slack.net/~ant/
 
-//#include "debugger/report.h"
+#include "Spc_Report.h"
 #include "Snes_Spc.h"
 
 #include <string.h>
@@ -424,7 +424,7 @@ void Snes_Spc::cpu_write( int data, int addr, rel_time_t time, int external/*=0*
 	if (!external)
 	{
 		MEM_ACCESS( time, addr )
-//		report_memwrite(addr);
+		spc_report_mem_write(addr);
 	}
 	// RAM
 	RAM [addr] = (uint8_t) data;
@@ -488,7 +488,7 @@ int Snes_Spc::cpu_read( int addr, rel_time_t time, int external/*=0*/ )
 	
 	if (!external)
 	{
-//		report_memread(addr);
+		spc_report_mem_read(addr);
 		MEM_ACCESS( time, addr )
 	}
 	// RAM

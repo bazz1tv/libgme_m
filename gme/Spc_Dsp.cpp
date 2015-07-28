@@ -1,6 +1,6 @@
 // snes_spc 0.9.0. http://www.slack.net/~ant/
 
-//#include "debugger/report.h"
+#include "Spc_Report.h"
 #include <stdio.h>
 #include "Spc_Dsp.h"
 
@@ -299,32 +299,32 @@ inline void Spc_Dsp::decode_brr( voice_t* v )
 {
 	// Arrange the four input nybbles in 0xABCD order for easy decoding
 	int nybbles = m.t_brr_byte * 0x100 + m.ram [(v->brr_addr + v->brr_offset + 1) & 0xFFFF];
-//	report_memread(v->brr_addr);
-//	report_memread(v->brr_addr+1);
-//	report_memread(v->brr_addr+2);
-//	report_memread(v->brr_addr+3);
-//	report_memread(v->brr_addr+4);
-//	report_memread(v->brr_addr+5);
-//	report_memread(v->brr_addr+6);
-//	report_memread(v->brr_addr+7);
-//	report_memread(v->brr_addr+8);
+	spc_report_mem_read(v->brr_addr);
+	spc_report_mem_read(v->brr_addr+1);
+	spc_report_mem_read(v->brr_addr+2);
+	spc_report_mem_read(v->brr_addr+3);
+	spc_report_mem_read(v->brr_addr+4);
+	spc_report_mem_read(v->brr_addr+5);
+	spc_report_mem_read(v->brr_addr+6);
+	spc_report_mem_read(v->brr_addr+7);
+	spc_report_mem_read(v->brr_addr+8);
 	int const header = m.t_brr_header;
 
 	// trick to get white, because the sample is also read, BLUE + YELLOW = WHITE
 	if (header & 1)
 	{
 		uint16_t very_end = v->brr_addr+8;
-//		report_echomem(very_end); //fprintf(stderr,"0x%04x\n", v->brr_addr);
-//		//report::src[m.t_srcn].brr_end = very_end;
+		spc_report_mem_echo(very_end); //fprintf(stderr,"0x%04x\n", v->brr_addr);
+		//Spc_Report::src[m.t_srcn].brr_end = very_end;
 		
-		/*for (int i=0; i < report::BRR_HEADER_MAX; i++)
+		/*for (int i=0; i < Spc_Report::BRR_HEADER_MAX; i++)
 		{
-//			if (report::BRR_Headers[i] == 0xffff)
+			if (Spc_Report::BRR_Headers[i] == 0xffff)
 			{
-//				report::BRR_Headers[i] = very_end;
+				Spc_Report::BRR_Headers[i] = very_end;
 				break;
 			}
-//			else if (report::BRR_Headers[i] == very_end)
+			else if (Spc_Report::BRR_Headers[i] == very_end)
 				break;
 		}*/
 	}
@@ -433,8 +433,8 @@ inline VOICE_CLOCK( V1 )
 	
 		//1 
 		
-//		report::src[m.t_srcn].brr_start = *p;
-//		report::src[m.t_srcn].brr_loop_start = *loop_addr;
+		Spc_Report::src[m.t_srcn].brr_start = *p;
+		Spc_Report::src[m.t_srcn].brr_loop_start = *loop_addr;
 	
 	
 	m.t_srcn = VREG(v->regs,srcn);
@@ -679,11 +679,11 @@ inline void Spc_Dsp::echo_read( int ch )
 	int s=0; 
 	if(echoing)
 	{
-//		// only report the echo region color if echo is ON in SPC
+		// only report the echo region color if echo is ON in SPC
 		if (!(m.t_echo_enabled & 0x20))
 		{
-//			report_echomem(m.t_echo_ptr + ch * 2);
-//			report_echomem(m.t_echo_ptr + ch * 2 + 1);
+			spc_report_mem_echo(m.t_echo_ptr + ch * 2);
+			spc_report_mem_echo(m.t_echo_ptr + ch * 2 + 1);
 		}
 		s = GET_LE16SA( ECHO_PTR( ch ) );
 	}

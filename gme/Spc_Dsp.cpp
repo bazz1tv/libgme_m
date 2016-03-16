@@ -299,35 +299,32 @@ inline void Spc_Dsp::decode_brr( voice_t* v )
 {
 	// Arrange the four input nybbles in 0xABCD order for easy decoding
 	int nybbles = m.t_brr_byte * 0x100 + m.ram [(v->brr_addr + v->brr_offset + 1) & 0xFFFF];
-	spc_report_mem_read(v->brr_addr);
-	spc_report_mem_read(v->brr_addr+1);
-	spc_report_mem_read(v->brr_addr+2);
-	spc_report_mem_read(v->brr_addr+3);
-	spc_report_mem_read(v->brr_addr+4);
-	spc_report_mem_read(v->brr_addr+5);
-	spc_report_mem_read(v->brr_addr+6);
-	spc_report_mem_read(v->brr_addr+7);
-	spc_report_mem_read(v->brr_addr+8);
 	int const header = m.t_brr_header;
-
-	// trick to get white, because the sample is also read, BLUE + YELLOW = WHITE
-	if (header & 1)
+	if (!(header & 1))
 	{
-		uint16_t very_end = v->brr_addr+8;
-		spc_report_mem_echo(very_end); //fprintf(stderr,"0x%04x\n", v->brr_addr);
-		//Spc_Report::src[m.t_srcn].brr_end = very_end;
-		
-		/*for (int i=0; i < Spc_Report::BRR_HEADER_MAX; i++)
-		{
-			if (Spc_Report::BRR_Headers[i] == 0xffff)
-			{
-				Spc_Report::BRR_Headers[i] = very_end;
-				break;
-			}
-			else if (Spc_Report::BRR_Headers[i] == very_end)
-				break;
-		}*/
+		spc_report_mem_echo(v->brr_addr);
+		spc_report_mem_read(v->brr_addr);
+		spc_report_mem_read(v->brr_addr+1);
+		spc_report_mem_read(v->brr_addr+2);
+		spc_report_mem_read(v->brr_addr+3);
+		spc_report_mem_read(v->brr_addr+4);
+		spc_report_mem_read(v->brr_addr+5);
+		spc_report_mem_read(v->brr_addr+6);
+		spc_report_mem_read(v->brr_addr+7);
+		spc_report_mem_read(v->brr_addr+8);
 	}
+	else {
+		spc_report_mem_echo(v->brr_addr);
+		spc_report_mem_echo(v->brr_addr+1);
+		spc_report_mem_echo(v->brr_addr+2);
+		spc_report_mem_echo(v->brr_addr+3);
+		spc_report_mem_echo(v->brr_addr+4);
+		spc_report_mem_echo(v->brr_addr+5);
+		spc_report_mem_echo(v->brr_addr+6);
+		spc_report_mem_echo(v->brr_addr+7);
+		spc_report_mem_echo(v->brr_addr+8);
+	}
+
 	
 	// Write to next four samples in circular buffer
 	int* pos = &v->buf [v->buf_pos];

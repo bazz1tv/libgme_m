@@ -4,7 +4,7 @@ OBJCC=g++
 debug = -g
 optimize = -O2
 
-gme_CPPFLAGS=$(debug) $(optimize) -c -I. -I$(SHARED_DIR) -Igme
+gme_CPPFLAGS=$(debug) $(optimize) -c -I. -I$(SHARED_DIR) -Igme -Wno-c++11-narrowing
 
 LDFLAGS=-Xlinker -dylib $(debug)
 

@@ -1,6 +1,7 @@
 #pragma once
 
 //#include "Spc_Emu.h"
+#include "blargg_endian.h"
 #include "Snes_Spc.h"
 
 #define MAX_SRCN_ENTRIES 256

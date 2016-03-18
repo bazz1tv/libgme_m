@@ -1,3 +1,35 @@
+libname = libgme_m
+version = 0.1
+
+prefix = /opt/local
+
+ifeq ($(OS),Windows_NT)
+    uname_S := Windows
+else
+    uname_S := $(shell uname -s)
+endif
+
+ifneq (,$(filter $(uname_S),Darwin Linux))
+	CPP_DEFS += -DHAVE_STDINT_H
+endif
+
+ifeq ($(uname_S), Darwin)
+	libname_ext = $(libname).dylib
+    target = $(libname_ext) # .$(version)
+    libname_ext_ver = $(libname_ext).$(version)
+    LDFLAGS += -Xlinker -dylib
+else ifeq ($(uname_S), Linux)
+	libname_ext = $(libname).so
+	libname_ext_ver = $(libname_ext).$(version)
+    target = $(libname_ext)
+    LDFLAGS += -shared -Wl,-soname,$(libname_ext_ver)
+    CPPFLAGS += -fPIC
+else ifeq ($(uname_S), Windows)
+    target = libgme.dll
+else
+	
+endif
+
 CC=g++
 CPP=g++
 OBJCC=g++
@@ -6,11 +38,11 @@ optimize = -O2
 
 gme_CPPFLAGS=$(debug) $(optimize) -c -I. -I$(SHARED_DIR) -Igme -Wno-c++11-narrowing
 
-LDFLAGS=-Xlinker -dylib $(debug)
+LDFLAGS += $(debug)
 
 # global CPP
-CPP_DEFS 	= -DNDEBUG
-CPPFLAGS 	= -Wno-return-type -std=c++11 $(gme_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
+CPP_DEFS 	+= -DNDEBUG
+CPPFLAGS 	+= -Wno-return-type -std=c++11 $(gme_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
 
 
 #### SOURCES
@@ -23,12 +55,11 @@ MSOURCES=$(wildcard $(SHARED_DIR)*/*.m)
 
 # 
 OBJECTS=$(SOURCES:.cpp=.cpp.o) $(MSOURCES:.m=.m.o)
-EXECUTABLE=libgme.dylib
 
 
-all: $(SOURCES) $(EXECUTABLE)
+all: $(SOURCES) $(libname_ext_ver)
 	
-$(EXECUTABLE): $(OBJECTS)
+$(libname_ext).$(version): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
 %.cpp.o: %.cpp
@@ -38,17 +69,42 @@ $(EXECUTABLE): $(OBJECTS)
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
 	
 clean:
-	rm -f $(EXECUTABLE)
+ifneq (,$(filter $(uname_S),Darwin Linux))
+	rm -f $(libname_ext_ver)
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
+else ifeq ($(uname_S), Windows)
+	
+else
+	
+endif
+	
 
-install: $(EXECUTABLE)
-	mkdir -p /usr/local/include/gme
-	cp gme/*.h /usr/local/include/gme
-	cp libgme.dylib /usr/local/lib
+install: $(libname_ext_ver)
+ifneq (,$(filter $(uname_S),Darwin Linux))
+	mkdir -p $(prefix)/include/gme
+	cp gme/*.h $(prefix)/include/gme
+	mkdir -p $(prefix)/lib
+	cp $(libname_ext_ver) $(prefix)/lib
+	ln -sf $(prefix)/lib/$(libname_ext_ver) $(prefix)/lib/$(libname_ext)
+else ifeq ($(uname_S), Windows)
+	
+else
+	
+endif
+	
 
 uninstall:
-	rm -rf /usr/local/include/gme
-	rm /usr/local/lib/$(EXECUTABLE)
+ifneq (,$(filter $(uname_S),Darwin Linux))
+	rm -rf $(prefix)/include/gme
+	# could make symlink point to older version of the lib if it exists
+	rm $(prefix)/lib/$(libname_ext)
+	rm $(prefix)/lib/$(libname_ext_ver)
+else ifeq ($(uname_S), Windows)
+	
+else
+	
+endif
+	
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.

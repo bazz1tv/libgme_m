@@ -1,3 +1,4 @@
 *.cpp.d
 *.o
-*.dylib
+*.dylib*
+*.so*

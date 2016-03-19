@@ -16,6 +16,26 @@
 #ifndef BLARGG_COMMON_H
 #define BLARGG_COMMON_H
 
+#ifdef _WIN32
+
+  /* You should define ADD_EXPORTS *only* when building the DLL. */
+  #ifdef LIBGME_M_EXPORTS
+    #define LIBGME_MAPI __declspec(dllexport)
+  #else
+    #define LIBGME_MAPI __declspec(dllimport)
+  #endif
+
+  /* Define calling convention in one place, for convenience. */
+  #define LIBGME_MCALL __cdecl
+
+#else /* _WIN32 not defined. */
+
+  /* Define with no value on non-Windows OSes. */
+  #define LIBGME_MAPI
+  #define LIBGME_MCALL
+
+#endif
+
 // BLARGG_RESTRICT: equivalent to restrict, where supported
 #if defined (__GNUC__) || _MSC_VER >= 1100
 	#define BLARGG_RESTRICT __restrict

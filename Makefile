@@ -1,7 +1,7 @@
 libname = libgme_m
 version = 0.1
 
-prefix = /opt/local
+prefix ?= /opt/local
 
 ifeq ($(OS),Windows_NT)
     uname_S := Windows
@@ -9,7 +9,11 @@ else
     uname_S := $(shell uname -s)
 endif
 
-ifneq (,$(filter $(uname_S),Darwin Linux))
+ifdef CROSS_COMPILE
+	uname_S = Cross_Windows
+endif
+
+ifneq (,$(filter $(uname_S),Darwin Linux Cross_Windows))
 	CPP_DEFS += -DHAVE_STDINT_H
 endif
 
@@ -24,15 +28,22 @@ else ifeq ($(uname_S), Linux)
     target = $(libname_ext)
     LDFLAGS += -shared -Wl,-soname,$(libname_ext_ver)
     CPPFLAGS += -fPIC
+else ifeq ($(uname_S), Cross_Windows)
+	libname_ext = $(libname).dll
+	libname_ext_ver = $(libname_ext) #.$(version)
+    target = $(libname_ext_ver)
+    LDFLAGS += -shared -Wl,--out-implib,$(libname).dll.a
+    #CPPFLAGS += -fPIC
+    CPP_DEFS += -DLIBGME_M_EXPORTS
 else ifeq ($(uname_S), Windows)
     target = libgme.dll
 else
 	
 endif
 
-CC=g++
-CPP=g++
-OBJCC=g++
+CC=$(CROSS_COMPILE)g++
+CPP=$(CROSS_COMPILE)g++
+OBJCC=$(CROSS_COMPILE)g++
 debug = -g
 optimize = -O2
 
@@ -59,7 +70,7 @@ OBJECTS=$(SOURCES:.cpp=.cpp.o) $(MSOURCES:.m=.m.o)
 
 all: $(SOURCES) $(libname_ext_ver)
 	
-$(libname_ext).$(version): $(OBJECTS)
+$(libname_ext_ver): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
 %.cpp.o: %.cpp
@@ -70,6 +81,9 @@ $(libname_ext).$(version): $(OBJECTS)
 	
 clean:
 ifneq (,$(filter $(uname_S),Darwin Linux))
+	rm -f $(libname_ext_ver)
+	find . -name "*.o" -o -name "*.d" | xargs rm -rf
+else ifeq ($(uname_S), Cross_Windows)
 	rm -f $(libname_ext_ver)
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
 else ifeq ($(uname_S), Windows)
@@ -86,6 +100,13 @@ ifneq (,$(filter $(uname_S),Darwin Linux))
 	mkdir -p $(prefix)/lib
 	cp $(libname_ext_ver) $(prefix)/lib
 	ln -sf $(prefix)/lib/$(libname_ext_ver) $(prefix)/lib/$(libname_ext)
+else ifeq ($(uname_S), Cross_Windows)
+	mkdir -p $(prefix)/include/gme
+	cp gme/*.h $(prefix)/include/gme
+	mkdir -p $(prefix)/lib
+	cp $(libname_ext_ver) $(prefix)/bin
+	cp $(libname).dll.a $(prefix)/lib
+	#ln -sf $(prefix)/lib/$(libname_ext_ver) $(prefix)/lib/$(libname_ext)
 else ifeq ($(uname_S), Windows)
 	
 else

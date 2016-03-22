@@ -32,7 +32,7 @@ else ifeq ($(uname_S), Cross_Windows)
 	libname_ext = $(libname).dll
 	libname_ext_ver = $(libname_ext) #.$(version)
     target = $(libname_ext_ver)
-    LDFLAGS += -shared -Wl,--out-implib,$(libname).dll.a
+    LDFLAGS += -shared -Wl,--out-implib,$(libname).dll
     #CPPFLAGS += -fPIC
     CPP_DEFS += -DLIBGME_M_EXPORTS
 else ifeq ($(uname_S), Windows)

@@ -3,6 +3,8 @@ version = 0.1
 
 prefix ?= /opt/local
 
+CPP_DEFS += -DSMOOTH_VOLUME -DBLARGG_NONPORTABLE -DNDEBUG
+
 ifeq ($(OS),Windows_NT)
     uname_S := Windows
 else
@@ -21,7 +23,7 @@ ifeq ($(uname_S), Darwin)
 	libname_ext = $(libname).dylib
     target = $(libname_ext) # .$(version)
     libname_ext_ver = $(libname_ext).$(version)
-    LDFLAGS += -Xlinker -dylib
+    LDFLAGS += -Xlinker -dylib -dynamiclib -install_name @rpath/$(libname_ext_ver)
 else ifeq ($(uname_S), Linux)
 	libname_ext = $(libname).so
 	libname_ext_ver = $(libname_ext).$(version)
@@ -52,7 +54,7 @@ gme_CPPFLAGS=$(debug) $(optimize) -c -I. -I$(SHARED_DIR) -Igme -Wno-c++11-narrow
 LDFLAGS += $(debug)
 
 # global CPP
-CPP_DEFS 	+= -DNDEBUG
+CPP_DEFS 	+=
 CPPFLAGS 	+= -Wno-return-type -std=c++11 $(gme_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
 
 

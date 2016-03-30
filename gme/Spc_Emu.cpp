@@ -20,6 +20,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #include "blargg_source.h"
 
 // bazz additions
+Snes_Spc* Spc_Emu::can_has_apu() { return &apu; }
 uint8_t* Spc_Emu::ram() { return apu.ram(); }
 long Spc_Emu::pc() { return apu.pc(); }
 Spc_Dsp* Spc_Emu::dsp() { return apu.get_dsp(); }

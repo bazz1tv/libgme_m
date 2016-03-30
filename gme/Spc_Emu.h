@@ -56,6 +56,7 @@ public:
 	long trailer_size() const;
 
 	// bazz additions
+	Snes_Spc* can_has_apu();
 	uint8_t* ram();
 	long pc();
 	void toggle_echo();

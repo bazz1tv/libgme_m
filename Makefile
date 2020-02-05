@@ -32,7 +32,7 @@ else ifeq ($(uname_S), Cross_Windows)
 	libname_ext = $(libname).dll
 	libname_ext_ver = $(libname_ext) #.$(version)
     target = $(libname_ext_ver)
-    LDFLAGS += -shared -Wl,--out-implib,$(libname).dll
+    LDFLAGS += -shared -Wl,--out-implib,$(libname).dll.a
     #CPPFLAGS += -fPIC
     CPP_DEFS += -DLIBGME_M_EXPORTS
 else ifeq ($(uname_S), Windows)
@@ -105,7 +105,7 @@ else ifeq ($(uname_S), Cross_Windows)
 	cp gme/*.h $(prefix)/include/gme
 	mkdir -p $(prefix)/lib
 	cp $(libname_ext_ver) $(prefix)/bin
-	cp $(libname).dll.a $(prefix)/lib
+	cp $(libname).dll* $(prefix)/lib
 	#ln -sf $(prefix)/lib/$(libname_ext_ver) $(prefix)/lib/$(libname_ext)
 else ifeq ($(uname_S), Windows)
 	

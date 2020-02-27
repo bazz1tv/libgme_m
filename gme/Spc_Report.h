@@ -5,20 +5,20 @@
 
 //:< Why are these #defines and is there a cleaner way?
 #define spc_report_mem_read(addr) do {\
-if (Spc_Report::obj) Spc_Report::obj->report(Spc_Report::Type::Read, addr, 0);\
+  Spc_Report::obj->report(Spc_Report::Type::Read, addr, 0);\
 } while(0)
 
 #define spc_report_mem_echo(addr) do {\
-if (Spc_Report::obj) Spc_Report::obj->report(Spc_Report::Type::Echo, addr, 0);\
+  Spc_Report::obj->report(Spc_Report::Type::Echo, addr, 0);\
 } while(0)
 
 #define spc_report_mem_execute(addr, opcode) do {\
-if (Spc_Report::obj) Spc_Report::obj->report(\
-  Spc_Report::Type::Execute, addr, opcode);\
+  Spc_Report::obj->report(\
+    Spc_Report::Type::Execute, addr, opcode);\
 } while(0)
 
 #define spc_report_mem_write(addr) do {\
-if (Spc_Report::obj) Spc_Report::obj->report(Spc_Report::Type::Write, addr, 0);\
+  Spc_Report::obj->report(Spc_Report::Type::Write, addr, 0);\
 } while(0)
 
 

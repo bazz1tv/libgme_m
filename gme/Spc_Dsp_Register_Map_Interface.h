@@ -14,7 +14,7 @@ namespace dsp_reg
 {
   extern int how_many;
 enum {
-    vol_l=0,
+  vol_l=0,
   vol_r=1,
   plo=2,
   phi=3,

@@ -282,6 +282,7 @@ inline void Snes_Spc::write_port( time_t t, int port, int data )
 {
 	assert( (unsigned) port < port_count );
 	/*run_until_( t )*/ (&(m.smp_regs[0]) [r_cpuio0]) [0x10 + port] = data;
+	m.ram.ram[0xf4 + port] = (uint8_t) data;
 }
 
 inline void Snes_Spc::mute_voices( int mask ) { dsp.mute_voices( mask ); }

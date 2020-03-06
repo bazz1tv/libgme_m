@@ -21,8 +21,8 @@
   Spc_Report::obj->report(Spc_Report::Type::Write, addr, 0);\
 } while(0)
 
-#define spc_report_tracker_row(row) do {\
-	Spc_Report::obj->report(Spc_Report::Type::TrackerRow, row, 0);\
+#define spc_report_tracker(cmd, arg) do {\
+	Spc_Report::obj->report(Spc_Report::Type::TrackerCmd, cmd, arg);\
 } while(0)
 
 class Spc_Report
@@ -40,7 +40,7 @@ public:
   static unsigned char used2[0x101];
   static unsigned char used[0x10006];
 
-  enum Type { Read, Execute, Echo, Write, TrackerRow};
+  enum Type { Read, Execute, Echo, Write, TrackerCmd };
 
   //:< having the publish method be virtual is not a proper way to publish the reports
   virtual void report(Type type, unsigned addr, unsigned opcode)=0;

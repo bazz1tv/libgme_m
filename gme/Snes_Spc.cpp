@@ -443,12 +443,8 @@ void Snes_Spc::cpu_write( int data, int addr, rel_time_t time, int external/*=0*
 							(uint8_t) data, &REGS [r_cpuio0] );
 			#endif
 
-			if ( reg == 8 ) // write to F8
-			{
-				// bazz addition
-				// Report next row to tracker
-				spc_report_tracker_row(data);
-			}
+			if ( reg == 8 ) // write to F8, bazz addition
+				spc_report_tracker( data, REGS [0x09]);
 			
 			// Registers other than $F2 and $F4-$F7
 			//if ( reg != 2 && reg != 4 && reg != 5 && reg != 6 && reg != 7 )

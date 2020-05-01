@@ -99,7 +99,6 @@ ifneq (,$(filter $(uname_S),Darwin Linux))
 	cp gme_m/*.h $(prefix)/include/gme_m
 	mkdir -p $(prefix)/lib
 	cp $(libname_ext_ver) $(prefix)/lib
-	install_name_tool -id $(prefix)/lib/$(libname_ext_ver) $(prefix)/lib/$(libname_ext_ver)
 	ln -sf $(prefix)/lib/$(libname_ext_ver) $(prefix)/lib/$(libname_ext)
 else ifeq ($(uname_S), Cross_Windows)
 	mkdir -p $(prefix)/include/gme_m
@@ -112,6 +111,10 @@ else ifeq ($(uname_S), Windows)
 	
 else
 	
+endif
+
+ifeq ($(uname_S), Darwin)
+	install_name_tool -id $(prefix)/lib/$(libname_ext_ver) $(prefix)/lib/$(libname_ext_ver)
 endif
 	
 

@@ -47,7 +47,7 @@ OBJCC=$(CROSS_COMPILE)g++
 debug = -g
 optimize = -O2
 
-gme_CPPFLAGS=$(debug) $(optimize) -c -I. -I$(SHARED_DIR) -Igme -Wno-c++11-narrowing
+gme_CPPFLAGS=$(debug) $(optimize) -c -I. -I$(SHARED_DIR) -Igme_m -Wno-c++11-narrowing
 
 LDFLAGS += $(debug)
 
@@ -95,14 +95,15 @@ endif
 
 install: $(libname_ext_ver)
 ifneq (,$(filter $(uname_S),Darwin Linux))
-	mkdir -p $(prefix)/include/gme
-	cp gme/*.h $(prefix)/include/gme
+	mkdir -p $(prefix)/include/gme_m
+	cp gme_m/*.h $(prefix)/include/gme_m
 	mkdir -p $(prefix)/lib
 	cp $(libname_ext_ver) $(prefix)/lib
+	install_name_tool -id $(prefix)/lib/$(libname_ext_ver) $(prefix)/lib/$(libname_ext_ver)
 	ln -sf $(prefix)/lib/$(libname_ext_ver) $(prefix)/lib/$(libname_ext)
 else ifeq ($(uname_S), Cross_Windows)
-	mkdir -p $(prefix)/include/gme
-	cp gme/*.h $(prefix)/include/gme
+	mkdir -p $(prefix)/include/gme_m
+	cp gme_m/*.h $(prefix)/include/gme_m
 	mkdir -p $(prefix)/lib
 	cp $(libname_ext_ver) $(prefix)/bin
 	cp $(libname).dll* $(prefix)/lib
@@ -116,7 +117,7 @@ endif
 
 uninstall:
 ifneq (,$(filter $(uname_S),Darwin Linux))
-	rm -rf $(prefix)/include/gme
+	rm -rf $(prefix)/include/gme_m
 	# could make symlink point to older version of the lib if it exists
 	rm $(prefix)/lib/$(libname_ext)
 	rm $(prefix)/lib/$(libname_ext_ver)

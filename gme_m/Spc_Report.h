@@ -1,7 +1,7 @@
 #pragma once
 
 #include "blargg_common.h"
-#include "gme/Spc_Dsp_Register_Map_Interface.h"
+#include "Spc_Dsp_Register_Map_Interface.h"
 
 //:< Why are these #defines and is there a cleaner way?
 #define spc_report_mem_read(addr) do {\

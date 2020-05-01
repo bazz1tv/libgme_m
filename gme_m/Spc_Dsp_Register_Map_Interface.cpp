@@ -1,4 +1,4 @@
-#include "gme/Spc_Dsp_Register_Map_Interface.h"
+#include "Spc_Dsp_Register_Map_Interface.h"
 
 namespace dsp_reg
 {

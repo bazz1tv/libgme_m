@@ -1,4 +1,4 @@
-#include "gme/Spc_Report.h"
+#include "Spc_Report.h"
 
 Spc_Report *Spc_Report::obj = NULL;
 int Spc_Report::last_pc = -1;

@@ -3,6 +3,8 @@ version = 0.1
 
 prefix ?= /opt/local
 
+CPP_DEFS += -DSMOOTH_VOLUME -DBLARGG_NONPORTABLE -DNDEBUG
+
 ifeq ($(OS),Windows_NT)
     uname_S := Windows
 else
@@ -59,7 +61,7 @@ gme_CPPFLAGS=$(debug) $(optimize) -c -I. -I$(SHARED_DIR) -Igme_m -Wno-c++11-narr
 LDFLAGS += $(debug)
 
 # global CPP
-CPP_DEFS 	+= -DNDEBUG
+CPP_DEFS 	+=
 CPPFLAGS 	+= -Wno-return-type -std=c++11 $(gme_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
 
 

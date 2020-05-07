@@ -5,12 +5,10 @@
 #define BLARGG_CONFIG_H
 
 // For snes DSP
-#define SMOOTH_VOLUME 1
-#define SPC_LESS_ACCURATE 1
+//#define SMOOTH_VOLUME 1
+//#define SPC_LESS_ACCURATE 1
 
-#define GME_TYPE_LIST \
-  gme_spc_type
-
+#define GME_TYPE_LIST gme_spc_type
 
 // Uncomment to disable debugging checks
 //#define NDEBUG 1

@@ -21,10 +21,14 @@ ifeq ($(uname_S), Darwin)
 	libname_ext = $(libname).dylib
     target = $(libname_ext) # .$(version)
     libname_ext_ver = $(libname_ext).$(version)
-    OSX_CPPFLAGS = -arch x86_64 -mmacosx-version-min=10.6 \
-    -DMAC_OS_X_VERSION_MIN_REQUIRED=1060
-    CPPFLAGS += $(OSX_CPPFLAGS)
-    LDFLAGS += $(OSX_CPPFLAGS) -dynamiclib
+
+    ifeq ($(OSX_BACKSUPPORT), 1)
+		OSX_BACKSUPPORT = -arch x86_64 -mmacosx-version-min=10.9 \
+		-DMAC_OS_X_VERSION_MIN_REQUIRED=1090
+	endif
+
+    CPPFLAGS += $(OSX_BACKSUPPORT)
+    LDFLAGS += $(OSX_BACKSUPPORT) -dynamiclib
 else ifeq ($(uname_S), Linux)
 	libname_ext = $(libname).so
 	libname_ext_ver = $(libname_ext).$(version)

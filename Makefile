@@ -80,7 +80,8 @@ OBJECTS=$(SOURCES:.cpp=.cpp.o) $(MSOURCES:.m=.m.o)
 all: $(SOURCES) $(libname_ext_ver)
 	
 $(libname_ext_ver): $(OBJECTS)
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+	$(CC) $(OBJECTS) $(LDFLAGS) -install_name $(CURDIR)/$@ -o $@
+	ln -sf $(libname_ext_ver) $(libname_ext)
 
 %.cpp.o: %.cpp
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@

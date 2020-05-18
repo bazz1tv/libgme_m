@@ -30,7 +30,7 @@ ifeq ($(uname_S), Darwin)
 	endif
 
     CPPFLAGS += $(OSX_BACKSUPPORT)
-    LDFLAGS += $(OSX_BACKSUPPORT) -dynamiclib
+    LDFLAGS += $(OSX_BACKSUPPORT) -dynamiclib # -install_name $(CURDIR)/$(libname_ext_ver)
 else ifeq ($(uname_S), Linux)
 	libname_ext = $(libname).so
 	libname_ext_ver = $(libname_ext).$(version)
@@ -79,8 +79,8 @@ OBJECTS=$(SOURCES:.cpp=.cpp.o) $(MSOURCES:.m=.m.o)
 
 all: $(SOURCES) $(libname_ext_ver)
 	
-$(libname_ext_ver): $(OBJECTS)
-	$(CC) $(OBJECTS) $(LDFLAGS) -install_name $(CURDIR)/$@ -o $@
+$(libname_ext_ver): $(OBJECTS) Makefile
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 	ln -sf $(libname_ext_ver) $(libname_ext)
 
 %.cpp.o: %.cpp
@@ -101,7 +101,25 @@ else ifeq ($(uname_S), Windows)
 else
 	
 endif
-	
+
+# Scenario:
+# Put the DLL directly into the binary folder for hotlinking
+install-lib-direct: $(libname_ext_ver)
+ifneq (,$(filter $(uname_S),Darwin Linux))
+	mkdir -p $(prefix)
+	cp $(libname_ext_ver) $(prefix)
+else ifeq ($(uname_S), Cross_Windows)
+	mkdir -p $(prefix)
+	cp $(libname_ext_ver) $(prefix)
+	cp $(libname).dll* $(prefix)
+else ifeq ($(uname_S), Windows)
+
+else
+
+endif
+
+
+
 
 install: $(libname_ext_ver)
 ifneq (,$(filter $(uname_S),Darwin Linux))

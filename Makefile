@@ -30,7 +30,7 @@ ifeq ($(uname_S), Darwin)
 	endif
 
     CPPFLAGS += $(OSX_BACKSUPPORT)
-    LDFLAGS += $(OSX_BACKSUPPORT) -dynamiclib # -install_name $(CURDIR)/$(libname_ext_ver)
+    LDFLAGS += $(OSX_BACKSUPPORT) -dynamiclib -install_name $(CURDIR)/$(libname_ext_ver)
 else ifeq ($(uname_S), Linux)
 	libname_ext = $(libname).so
 	libname_ext_ver = $(libname_ext).$(version)

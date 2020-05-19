@@ -81,7 +81,10 @@ all: $(SOURCES) $(libname_ext_ver)
 	
 $(libname_ext_ver): $(OBJECTS) Makefile
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+ifneq (,$(filter $(uname_S),Darwin Linux))
 	ln -sf $(libname_ext_ver) $(libname_ext)
+endif
+
 
 %.cpp.o: %.cpp
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
@@ -111,7 +114,7 @@ ifneq (,$(filter $(uname_S),Darwin Linux))
 else ifeq ($(uname_S), Cross_Windows)
 	mkdir -p $(prefix)
 	cp $(libname_ext_ver) $(prefix)
-	cp $(libname).dll* $(prefix)
+	cp $(libname).dll $(prefix)
 else ifeq ($(uname_S), Windows)
 
 else

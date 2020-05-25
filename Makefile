@@ -1,5 +1,5 @@
 libname = libgme_m
-version = 0.1
+version = 0.0.1
 
 prefix ?= /opt/local
 
@@ -39,7 +39,7 @@ else ifeq ($(uname_S), Linux)
     CPPFLAGS += -fPIC
 else ifeq ($(uname_S), Cross_Windows)
 	libname_ext = $(libname).dll
-	libname_ext_ver = $(libname_ext) #.$(version)
+	libname_ext_ver = $(libname_ext).$(version)
     target = $(libname_ext_ver)
     LDFLAGS += -shared -Wl,--out-implib,$(libname).dll.a
     #CPPFLAGS += -fPIC
@@ -81,7 +81,7 @@ all: $(SOURCES) $(libname_ext_ver)
 	
 $(libname_ext_ver): $(OBJECTS) Makefile
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
-ifneq (,$(filter $(uname_S),Darwin Linux))
+ifneq (,$(filter $(uname_S),Darwin Linux Cross_Windows))
 	ln -sf $(libname_ext_ver) $(libname_ext)
 endif
 
@@ -111,10 +111,11 @@ install-lib-direct: $(libname_ext_ver)
 ifneq (,$(filter $(uname_S),Darwin Linux))
 	mkdir -p $(prefix)
 	cp $(libname_ext_ver) $(prefix)
+	ln -sf $(libname_ext_ver) $(prefix)/$(libname_ext)
 else ifeq ($(uname_S), Cross_Windows)
 	mkdir -p $(prefix)
-	cp $(libname_ext_ver) $(prefix)
-	cp $(libname).dll $(prefix)
+	#cp $(libname_ext_ver) $(prefix)
+	cp $(libname_ext) $(prefix)
 else ifeq ($(uname_S), Windows)
 
 else

@@ -47,6 +47,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 		}\
 		else\
 		{\
+			spc_report_mem_read(dp_addr);\
 			out = ram [dp_addr];\
 			int i = dp_addr - 0xF0;\
 			if ( (unsigned) i < 0x10 )\
@@ -289,6 +290,7 @@ loop:
 		#if !SPC_MORE_ACCURACY
 		{
 			int i = dp + temp;
+			spc_report_mem_write(i);
 			ram [i] = (uint8_t) data;
 			i -= 0xF0;
 			if ( (unsigned) i < 0x10 ) // 76%
@@ -312,6 +314,7 @@ loop:
 		#if !SPC_MORE_ACCURACY
 		{
 			int i = dp + data;
+			spc_report_mem_write(i);
 			ram [i] = (uint8_t) a;
 			i -= 0xF0;
 			if ( (unsigned) i < 0x10 ) // 39%

@@ -65,13 +65,12 @@ optimize = -O2
 
 #$(info CPP is $(CPP))
 
-gme_CPPFLAGS=$(debug) $(optimize) -c -I. -I$(SHARED_DIR) -Igme_m -Wno-c++11-narrowing
+gme_CPPFLAGS=$(debug) $(optimize) -c -I. -I$(SHARED_DIR) -Igme_m
 
 LDFLAGS += $(debug)
 
 # global CPP
-CPP_DEFS 	+=
-CPPFLAGS 	+= -Wno-return-type $(gme_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
+CPPFLAGS 	+= $(gme_CPPFLAGS) -MMD -MP
 
 
 #### SOURCES

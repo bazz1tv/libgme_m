@@ -50,11 +50,20 @@ else
 	
 endif
 
-CC=$(CROSS_COMPILE)g++
-CPP=$(CROSS_COMPILE)g++
-OBJCC=$(CROSS_COMPILE)g++
+# Only Set compilers if they are unset (default). This lets you set them from the environment manually.
+ifeq ($(origin CC),default)
+	CC = $(CROSS_COMPILE)g++
+endif
+ifeq ($(origin CPP),default)
+	CPP = $(CROSS_COMPILE)g++
+endif
+# OBJCC is not a Make default variable so use this syntax instead
+OBJCC ?= $(CROSS_COMPILE)g++
+
 debug = -g
 optimize = -O2
+
+#$(info CPP is $(CPP))
 
 gme_CPPFLAGS=$(debug) $(optimize) -c -I. -I$(SHARED_DIR) -Igme_m -Wno-c++11-narrowing
 
@@ -62,7 +71,7 @@ LDFLAGS += $(debug)
 
 # global CPP
 CPP_DEFS 	+=
-CPPFLAGS 	+= -Wno-return-type -std=c++11 $(gme_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
+CPPFLAGS 	+= -Wno-return-type $(gme_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
 
 
 #### SOURCES

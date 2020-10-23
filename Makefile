@@ -12,10 +12,18 @@ else
 endif
 
 ifdef CROSS_COMPILE
-	uname_S = Cross_Windows
+	ifneq (,$(findstring i686,$(CROSS_COMPILE)))
+    # 32 butt
+    uname_S = Cross_Windows32
+	else
+	  # 64 Bit (implied from lack of i686 string)
+		uname_S = Cross_Windows64
+	endif
 endif
 
-ifneq (,$(filter $(uname_S),Darwin Linux Cross_Windows))
+
+
+ifneq (,$(filter $(uname_S),Darwin Linux Cross_Windows64 Cross_Windows32))
 	CPP_DEFS += -DHAVE_STDINT_H
 endif
 
@@ -37,9 +45,22 @@ else ifeq ($(uname_S), Linux)
     target = $(libname_ext)
     LDFLAGS += -shared -Wl,-soname,$(libname_ext_ver)
     CPPFLAGS += -fPIC
-else ifeq ($(uname_S), Cross_Windows)
+else ifeq ($(uname_S), Cross_Windows64)
 	libname_ext = $(libname).dll
 	libname_ext_ver = $(libname_ext).$(version)
+    target = $(libname_ext_ver)
+    LDFLAGS += -shared -Wl,--out-implib,$(libname).dll.a
+    #CPPFLAGS += -fPIC
+    CPP_DEFS += -DLIBGME_M_EXPORTS
+else ifeq ($(uname_S), Cross_Windows32)
+	libname_ext = $(libname).dll
+	# For some reason, on the 32bit Mingw toolchain, the DLL file when dynamically
+	# compiled into SNES Tracker binaries, would reference a libgme_m.dll.0.1.1
+	# file name, where on 64 bit it would refer to the final libgme_m.dll name.
+	# To keep the same naming convention for the DLL names across builds,
+	# I will remove the version string from the libname_ext_ver variable below.
+	# That ought to fix it.
+	libname_ext_ver = $(libname_ext) # .$(version)
     target = $(libname_ext_ver)
     LDFLAGS += -shared -Wl,--out-implib,$(libname).dll.a
     #CPPFLAGS += -fPIC
@@ -81,7 +102,11 @@ all: $(SOURCES) $(libname_ext_ver)
 	
 $(libname_ext_ver): $(OBJECTS) Makefile
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
-ifneq (,$(filter $(uname_S),Darwin Linux Cross_Windows))
+
+# Since the Mingw32 toolchain needs to build libgme_m.dll directly, rather than
+# with the version string attached first, there is no need to link to the final
+# file name.
+ifneq (,$(filter $(uname_S),Darwin Linux Cross_Windows64))
 	ln -sf $(libname_ext_ver) $(libname_ext)
 endif
 
@@ -96,7 +121,7 @@ clean:
 ifneq (,$(filter $(uname_S),Darwin Linux))
 	rm -f $(libname_ext_ver)
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
-else ifeq ($(uname_S), Cross_Windows)
+else ifeq ($(uname_S), Cross_Windows64)
 	rm -f $(libname_ext_ver)
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
 else ifeq ($(uname_S), Windows)
@@ -112,7 +137,8 @@ ifneq (,$(filter $(uname_S),Darwin Linux))
 	mkdir -p $(prefix)
 	cp $(libname_ext_ver) $(prefix)
 	ln -sf $(libname_ext_ver) $(prefix)/$(libname_ext)
-else ifeq ($(uname_S), Cross_Windows)
+# else if CrossWindows64 or CrossWindows32
+else ifdef CROSS_COMPILE
 	mkdir -p $(prefix)
 	#cp $(libname_ext_ver) $(prefix)
 	cp $(libname_ext) $(prefix)
@@ -132,7 +158,7 @@ ifneq (,$(filter $(uname_S),Darwin Linux))
 	mkdir -p $(prefix)/lib
 	cp $(libname_ext_ver) $(prefix)/lib
 	ln -sf $(prefix)/lib/$(libname_ext_ver) $(prefix)/lib/$(libname_ext)
-else ifeq ($(uname_S), Cross_Windows)
+else ifeq ($(uname_S), Cross_Windows64)
 	mkdir -p $(prefix)/include/gme_m
 	cp gme_m/*.h $(prefix)/include/gme_m
 	mkdir -p $(prefix)/lib

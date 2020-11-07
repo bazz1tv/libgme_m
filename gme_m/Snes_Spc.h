@@ -275,7 +275,7 @@ inline int Snes_Spc::sample_count() const { return (m.extra_clocks >> 5) * 2; }
 inline int Snes_Spc::read_port( time_t t, int port )
 {
 	assert( (unsigned) port < port_count );
-	return run_until_( t ) [port];
+	return (m.smp_regs[0][r_cpuio0 + port]);
 }
 
 inline void Snes_Spc::write_port( time_t t, int port, int data )

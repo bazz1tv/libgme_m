@@ -47,7 +47,7 @@ else ifeq ($(uname_S), Linux)
     CPPFLAGS += -fPIC
 else ifeq ($(uname_S), Cross_Windows64)
 	libname_ext = $(libname).dll
-	libname_ext_ver = $(libname_ext).$(version)
+	libname_ext_ver = $(libname_ext)
     target = $(libname_ext_ver)
     LDFLAGS += -shared -Wl,--out-implib,$(libname).dll.a
     #CPPFLAGS += -fPIC
@@ -106,7 +106,7 @@ $(libname_ext_ver): $(OBJECTS) Makefile
 # Since the Mingw32 toolchain needs to build libgme_m.dll directly, rather than
 # with the version string attached first, there is no need to link to the final
 # file name.
-ifneq (,$(filter $(uname_S),Darwin Linux Cross_Windows64))
+ifneq (,$(filter $(uname_S),Darwin Linux))
 	ln -sf $(libname_ext_ver) $(libname_ext)
 endif
 
@@ -118,17 +118,8 @@ endif
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
 	
 clean:
-ifneq (,$(filter $(uname_S),Darwin Linux))
-	rm -f $(libname_ext_ver)
+	rm -f $(libname_ext_ver) $(libname_ext)
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
-else ifeq ($(uname_S), Cross_Windows64)
-	rm -f $(libname_ext_ver)
-	find . -name "*.o" -o -name "*.d" | xargs rm -rf
-else ifeq ($(uname_S), Windows)
-	
-else
-	
-endif
 
 # Scenario:
 # Put the DLL directly into the binary folder for hotlinking

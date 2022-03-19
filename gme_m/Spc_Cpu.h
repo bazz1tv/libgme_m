@@ -959,6 +959,8 @@ loop:
 		BRANCH( y )
 	
 	case 0x1F: // JMP [abs+X]
+	    spc_report_mem_read(READ_PC16( pc ) + x);
+	    spc_report_mem_read(READ_PC16( pc ) + x+1);
 		SET_PC( READ_PC16( pc ) + x );
 		// fall through
 	case 0x5F: // JMP abs

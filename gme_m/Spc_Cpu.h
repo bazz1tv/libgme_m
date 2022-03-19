@@ -89,6 +89,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #else
 #define PUSH16( data )\
 {\
+    spc_report_mem_write(sp-ram-1);\
+    spc_report_mem_write(sp-ram-2);\
 	int addr = (sp -= 2) - ram;\
 	if ( addr > 0x100 )\
 	{\
@@ -104,6 +106,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #define PUSH( data )\
 {\
+    spc_report_mem_write(sp-ram-1);\
 	*--sp = (uint8_t) (data);\
 	if ( sp - ram == 0x100 )\
 		sp += 0x100;\
@@ -111,6 +114,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #define POP( out )\
 {\
+    spc_report_mem_read(sp-ram);\
 	out = *sp++;\
 	if ( sp - ram == 0x201 )\
 	{\
@@ -260,6 +264,8 @@ loop:
 		#else
 		{
 			int addr = sp - ram;
+			spc_report_mem_read(addr);
+			spc_report_mem_read(addr+1);
 			SET_PC( GET_LE16( sp ) );
 			sp += 2;
 			if ( addr < 0x1FF )
@@ -1007,10 +1013,16 @@ loop:
 	{
 		int temp;
 	case 0x7F: // RET1
+	{
 		temp = *sp;
+		int addr = sp - ram;
+		spc_report_mem_read(addr);
+		spc_report_mem_read(addr+1);
+		spc_report_mem_read(addr+2);
 		SET_PC( GET_LE16( sp + 1 ) );
 		sp += 3;
 		goto set_psw;
+	}
 	case 0x8E: // POP PSW
 		POP( temp );
 	set_psw:

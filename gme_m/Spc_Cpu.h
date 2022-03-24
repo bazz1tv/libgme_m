@@ -349,9 +349,13 @@ loop:
 		pc--;\
 		goto end_##op;\
 	CASE( op + 0x0F ) /* (dp)+Y */\
+		spc_report_mem_read(DP_ADDR(data));\
+		spc_report_mem_read(DP_ADDR(data)+1);\
 		data = READ_PROG16( data + dp ) + y;\
 		goto end_##op;\
 	CASE( op - 0x01 ) /* (dp+X) */\
+		spc_report_mem_read(DP_ADDR(data+x));\
+		spc_report_mem_read(DP_ADDR(data+x)+1);\
 		data = READ_PROG16( ((uint8_t) (data + x)) + dp );\
 		goto end_##op;\
 	CASE( op + 0x0E ) /* abs+Y */\

@@ -978,6 +978,8 @@ loop:
 		int ret_addr = GET_PC();
 		SUSPICIOUS_OPCODE( "BRK" );
 		SET_PC( READ_PROG16( 0xFFDE ) ); // vector address verified
+		spc_report_mem_read( 0xFFDE );
+		spc_report_mem_read( 0XFFDF );
 		PUSH16( ret_addr );
 		GET_PSW( temp );
 		psw = (psw | b10) & ~i04;
@@ -1009,6 +1011,8 @@ loop:
 	case 0xE1:
 	case 0xF1: {
 		int ret_addr = GET_PC();
+		spc_report_mem_read( 0xFFDE - (opcode >> 3) );
+		spc_report_mem_read( 0xFFDE - (opcode >> 3) +1 );
 		SET_PC( READ_PROG16( 0xFFDE - (opcode >> 3) ) );
 		PUSH16( ret_addr );
 		goto loop;

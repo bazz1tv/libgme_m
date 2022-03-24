@@ -3,7 +3,7 @@ version = 0.0.1
 
 prefix ?= /opt/local
 
-CPP_DEFS += -DSMOOTH_VOLUME -DBLARGG_NONPORTABLE -DNDEBUG
+CPP_DEFS += -DSMOOTH_VOLUME -DBLARGG_NONPORTABLE -DNDEBUG -DSPC_MORE_ACCURACY
 
 ifeq ($(OS),Windows_NT)
     uname_S := Windows

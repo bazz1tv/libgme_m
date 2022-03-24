@@ -89,6 +89,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #else
 #define PUSH16( data )\
 {\
+    spc_report_mem_write(sp-ram-1);\
+    spc_report_mem_write(sp-ram-2);\
 	int addr = (sp -= 2) - ram;\
 	if ( addr > 0x100 )\
 	{\
@@ -104,6 +106,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #define PUSH( data )\
 {\
+    spc_report_mem_write(sp-ram-1);\
 	*--sp = (uint8_t) (data);\
 	if ( sp - ram == 0x100 )\
 		sp += 0x100;\
@@ -111,6 +114,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #define POP( out )\
 {\
+    spc_report_mem_read(sp-ram);\
 	out = *sp++;\
 	if ( sp - ram == 0x201 )\
 	{\
@@ -198,7 +202,7 @@ loop:
 	check( (unsigned) y < 0x100 );
 	
 	opcode = *pc;
-	spc_report_mem_execute(pc-ram, *pc);
+	spc_report_mem_execute(GET_PC(), opcode);
 	if ( (rel_time += m.cycle_table [opcode]) > 0 )
 		goto out_of_time;
 	
@@ -260,6 +264,8 @@ loop:
 		#else
 		{
 			int addr = sp - ram;
+			spc_report_mem_read(addr);
+			spc_report_mem_read(addr+1);
 			SET_PC( GET_LE16( sp ) );
 			sp += 2;
 			if ( addr < 0x1FF )
@@ -343,9 +349,13 @@ loop:
 		pc--;\
 		goto end_##op;\
 	CASE( op + 0x0F ) /* (dp)+Y */\
+		spc_report_mem_read(DP_ADDR(data));\
+		spc_report_mem_read(DP_ADDR(data)+1);\
 		data = READ_PROG16( data + dp ) + y;\
 		goto end_##op;\
 	CASE( op - 0x01 ) /* (dp+X) */\
+		spc_report_mem_read(DP_ADDR(data+x));\
+		spc_report_mem_read(DP_ADDR(data+x)+1);\
 		data = READ_PROG16( ((uint8_t) (data + x)) + dp );\
 		goto end_##op;\
 	CASE( op + 0x0E ) /* abs+Y */\
@@ -953,6 +963,8 @@ loop:
 		BRANCH( y )
 	
 	case 0x1F: // JMP [abs+X]
+	    spc_report_mem_read(READ_PC16( pc ) + x);
+	    spc_report_mem_read(READ_PC16( pc ) + x+1);
 		SET_PC( READ_PC16( pc ) + x );
 		// fall through
 	case 0x5F: // JMP abs
@@ -966,6 +978,8 @@ loop:
 		int ret_addr = GET_PC();
 		SUSPICIOUS_OPCODE( "BRK" );
 		SET_PC( READ_PROG16( 0xFFDE ) ); // vector address verified
+		spc_report_mem_read( 0xFFDE );
+		spc_report_mem_read( 0XFFDF );
 		PUSH16( ret_addr );
 		GET_PSW( temp );
 		psw = (psw | b10) & ~i04;
@@ -997,6 +1011,8 @@ loop:
 	case 0xE1:
 	case 0xF1: {
 		int ret_addr = GET_PC();
+		spc_report_mem_read( 0xFFDE - (opcode >> 3) );
+		spc_report_mem_read( 0xFFDE - (opcode >> 3) +1 );
 		SET_PC( READ_PROG16( 0xFFDE - (opcode >> 3) ) );
 		PUSH16( ret_addr );
 		goto loop;
@@ -1007,10 +1023,16 @@ loop:
 	{
 		int temp;
 	case 0x7F: // RET1
+	{
 		temp = *sp;
+		int addr = sp - ram;
+		spc_report_mem_read(addr);
+		spc_report_mem_read(addr+1);
+		spc_report_mem_read(addr+2);
 		SET_PC( GET_LE16( sp + 1 ) );
 		sp += 3;
 		goto set_psw;
+	}
 	case 0x8E: // POP PSW
 		POP( temp );
 	set_psw:

@@ -293,6 +293,7 @@ int const no_read_before_write = 0x2000;
 
 void Snes_Spc::cpu_write_smp_reg_( int data, rel_time_t time, int addr )
 {
+	spc_report_mem_write(addr);
 	switch ( addr )
 	{
 	case r_t0target:

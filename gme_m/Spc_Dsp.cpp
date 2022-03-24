@@ -440,8 +440,15 @@ inline VOICE_CLOCK( V2 )
 {
 	// Read sample pointer (ignored if not needed)
 	uint8_t const* entry = &m.ram [m.t_dir_addr];
-	if ( !v->kon_delay )
+	if ( !v->kon_delay ) {
 		entry += 2;
+		spc_report_mem_read(m.t_dir_addr+2);
+		spc_report_mem_read(m.t_dir_addr+3);
+	}
+	else {
+		spc_report_mem_read(m.t_dir_addr);
+		spc_report_mem_read(m.t_dir_addr+1);
+	}
 	m.t_brr_next_addr = GET_LE16A( entry );
 	
 	m.t_adsr0 = VREG(v->regs,adsr0);

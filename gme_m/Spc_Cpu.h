@@ -202,7 +202,7 @@ loop:
 	check( (unsigned) y < 0x100 );
 	
 	opcode = *pc;
-	spc_report_mem_execute(pc-ram, *pc);
+	spc_report_mem_execute(GET_PC(), opcode);
 	if ( (rel_time += m.cycle_table [opcode]) > 0 )
 		goto out_of_time;
 	
